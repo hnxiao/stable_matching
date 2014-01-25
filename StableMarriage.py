@@ -10,13 +10,8 @@ class Person:
         self._affianced = None
         return
 
-    def set_preference(self, people, preference = None):
-        if preference == None:
-            # generate preference randomly from people
-            random.shuffle(people)
-            self._preference = people
-        else:
-            self._preference = preference
+    def set_preference(self, preference):
+        self._preference = preference
         return self._preference
     def get_preference(self,):
         return self._preference
@@ -80,12 +75,25 @@ class StableMarriage:
     def __init__(self, n):
         self._men = [Man(i) for i in range(n)]
         self._women = [Woman(i) for i in range(n)]
-        for man in self._men:
-            man.set_preference([w for w in self._women])
-        for woman in self._women:
-            woman.set_preference([m for m in self._men])
         # for debug
         self._pair_history = []
+        return
+
+    def set_preferences(self, preferences = {}):
+        for man in self._men:
+            try:
+                preference = preferences[man]
+            except KeyError:
+                preference = [w for w in self._women]
+                random.shuffle(preference)
+            man.set_preference(preference)
+        for woman in self._women:
+            try:
+                preference = preferences[man]
+            except KeyError:
+                preference = [w for w in self._men]
+                random.shuffle(preference)
+            woman.set_preference(preference)
         return
 
     def main(self,):
@@ -116,21 +124,25 @@ class StableMarriage:
         return
 
     def print_result(self,):
+        sys.stdout.write("Final result:\n")
         for man in self._men:
             if man.is_engaged():
-                sys.stdout.write("%s is engaged with %s\n"
+                sys.stdout.write("    %s is engaged with %s\n"
                                  %(man, man.get_affianced()))
             else:
-                sys.stdout.write("%s is free\n" %man)
+                sys.stdout.write("    %s is free\n" %man)
+        sys.stdout.write("Who proposed to whom:\n")
         for man in self._men:
-            sys.stdout.write("%s propoesd to %s\n"
+            sys.stdout.write("    %s proposed to %s\n"
                              %(man, [woman for woman in man.get_proposed_list()]))
+        sys.stdout.write("Who paired with whom chronologically:\n")
         for (m,w) in self._pair_history:
-            sys.stdout.write("pairs: (%s,%s)\n" %(m ,w))
+            sys.stdout.write("    pairs: (%s,%s)\n" %(m ,w))
         return
 
 def main():
     SM = StableMarriage(5)
+    SM.set_preferences()
     SM.main()
     SM.print_result()
 
