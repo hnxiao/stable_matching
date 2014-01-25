@@ -31,11 +31,6 @@ class Lab(Woman):
 
     def is_free(self):
         return len(self._students) < self._capacity
-    def is_engaged(self,):
-        return self.is_free == False
-    def set_free(self,):
-        self._students = []
-        return True
 
     def add_student(self, student):
         return self._students.append( student )
