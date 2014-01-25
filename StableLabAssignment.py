@@ -5,6 +5,10 @@ import sys
 import random
 from StableMarriage import Man,Woman,StableMarriage
 
+"""
+http://www.is.ocha.ac.jp/~kudo/lab_algo.html
+"""
+
 class Student(Man):
     def get_lab_to_enroll(self,):
         return self.get_woman_to_propose_to()
