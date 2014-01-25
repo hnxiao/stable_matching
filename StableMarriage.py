@@ -46,8 +46,8 @@ class Man(Person):
         self._proposed = []
         return
 
-    def still_in_action(self, women):
-        return self.is_free() and len(self._proposed) < len(women)
+    def still_has_hope(self, all_candidate):
+        return len(self._proposed) < len(all_candidate)
 
     def get_woman_to_propose_to(self,):
         women_candidate = [woman for woman in self._preference
@@ -66,9 +66,9 @@ class Woman(Person):
         return
 
     def prefer_to_affianced(self, man_proposed):
-        return self.__prefer(man_proposed, self._affianced)
+        return self.prefer(man_proposed, self._affianced)
 
-    def __prefer(self, a, b):
+    def prefer(self, a, b):
         return self._preference.index(a) < self._preference.index(b)
 
 class StableMarriage:
@@ -84,23 +84,24 @@ class StableMarriage:
             try:
                 preference = preferences[man]
             except KeyError:
-                preference = [w for w in self._women]
+                preference = [woman for woman in self._women]
                 random.shuffle(preference)
             man.set_preference(preference)
         for woman in self._women:
             try:
                 preference = preferences[man]
             except KeyError:
-                preference = [w for w in self._men]
+                preference = [man for man in self._men]
                 random.shuffle(preference)
             woman.set_preference(preference)
         return
 
     def main(self,):
-        men_in_action = [man for man in self._men
-                         if man.still_in_action(self._women)]
-        while len(men_in_action) > 0:
-            man = men_in_action[0]
+        men_active = [man for man in self._men
+                      if man.is_free()
+                      and man.still_has_hope( all_candidate = self._women )]
+        while len(men_active) > 0:
+            man = men_active[0]
             woman = man.get_woman_to_propose_to()
             man.add_proposed_list(woman)
             if woman.is_free():
@@ -113,8 +114,9 @@ class StableMarriage:
                 else:
                     # nothing happens
                     pass
-            men_in_action = [man for man in self._men
-                             if man.still_in_action(self._women)]
+            men_active = [man for man in self._men
+                          if man.is_free()
+                          and man.still_has_hope( all_candidate = self._women )]
         return
 
     def __start_seeing(self, man, woman):
