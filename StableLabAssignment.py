@@ -37,12 +37,12 @@ class Lab(Woman):
         self._students = []
         return True
 
-    def has_affianced(self,):
-        return self.is_engaged()
     def add_student(self, student):
         return self._students.append( student )
     def remove_student(self, student):
         return self._students.remove( student )
+    def get_students(self,):
+        return self.get_affianced()
 
     def get_least_preferred_student(self,):
         least_preferred_student = None
@@ -53,8 +53,6 @@ class Lab(Woman):
                 least_preferred_student = student
                 rank = this_rank
         return least_preferred_student
-    def get_students(self,):
-        return self.get_affianced()
 
     def set_capacity(self, capacity):
         self._capacity = capacity
